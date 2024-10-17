@@ -1,4 +1,4 @@
-# ubuntu 24.10
+# system:ubuntu 24.10
 ## 1.Откомпилировать и собрать программу, запустить, как есть.
 ![image](https://github.com/user-attachments/assets/8fe6f11c-33e9-4b63-86cc-2e6560e77529)
 
