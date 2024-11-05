@@ -1,0 +1,4 @@
+----------------------------------------------------------
+                     Output with fflush()
+----------------------------------------------------------
+ 'The 1-th message'  'The 2-th message'  'The 3-th message'  'The 4-th message'  'The 5-th message'  'The 6-th message'  'The 7-th message'  'The 8-th message'  'The 9-th message' 
