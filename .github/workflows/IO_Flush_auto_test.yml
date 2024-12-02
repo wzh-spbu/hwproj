@@ -9,78 +9,62 @@ on:
 
 jobs:
   setup_and_build:
-    name: Set up and build program
+    name: Настройка и запуск билда
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install build tools
+      - name: Checkout code from repository
+        uses: actions/checkout@v4
+
+
+      - name: Install gcc
         run: |
           sudo apt-get update
           sudo apt install build-essential
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build the program
+      - name: Build the test program
         run: |
-          cd 01.IO_flush/Code_auto
-          gcc IO_Flush.c -o io_flush_auto
+          cd Code_test2
+          gcc test1.c -o test1_program
 
-      - name: Upload build artifacts for testing
+      - name: Upload build artifact for testing
         uses: actions/upload-artifact@v4
         with:
-          name: io_flush_auto
-          path: ${{ github.workspace }}/01.IO_flush/Code_auto/io_flush_auto
+          name: test1_program
+          path: ./Code_test2/test1_program
 
   test:
-    needs: setup_and_build
-    name: Run tests
+    needs: [setup_and_build]
+    name: Run Tests
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download build artifacts
+      - name: Download build artifact for testing
         uses: actions/download-artifact@v4
         with:
-          name: io_flush_auto
-          path: Code_auto
+          name: test1_program
+          path: ./Code_test2
 
-      - name: Run tests without fflush()
+      - name: Run test program with different options
         run: |
-          cd Code_auto
-          ./io_flush_auto -normal
+          cd Code_test2
+          chmod +x test1_program
+          
+          # 运行程序并使用不同的命令行参数
+          ./test1_program -normal
+          ./test1_program -fflush
+          ./test1_program -n
+          ./test1_program -redirect_normal
+          ./test1_program -redirect_fflush
+          ./test1_program -redirect_n
+          
 
-      - name: Run tests with fflush()
+      - name: Check output files
         run: |
-          cd Code_auto
-          ./io_flush_auto -fflush
-
-      - name: Run tests with '\n' output
-        run: |
-          cd Code_auto
-          ./io_flush_auto -n
-
-      - name: Run tests with redirected output (normal)
-        run: |
-          cd Code_auto
-          ./io_flush_auto -redirect_normal
-
-      - name: Run tests with redirected output (with fflush)
-        run: |
-          cd Code_auto
-          ./io_flush_auto -redirect_fflush
-
-      - name: Run tests with redirected output (with '\n')
-        run: |
-          cd Code_auto
-          ./io_flush_auto -redirect_n
-
-  save_results:
-    needs: test
-    name: Save results
-    runs-on: ubuntu-latest
-    steps:
-      - name: Save test outputs to artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: ./output
+          ls output/
+          cat output/output_normal.txt
+          cat output/error_normal.txt
+          cat output/output_fflush.txt
+          cat output/error_fflush.txt
+          cat output/output_with_n.txt
+          cat output/error_with_n.txt
