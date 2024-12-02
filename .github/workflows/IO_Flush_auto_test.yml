@@ -1,49 +1,57 @@
-name: IO_Flush
+name: IO Flush Auto Test
 
 on:
-  push:
-    branches:
-      - main
-      
-  workflow_dispatch: 
-
+    push:
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+    workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    setup_and_build:
+      name: Setup and Build
+      runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Create output directory
-      run: mkdir -p output
-
-    - name: Compile and run program
-      run: |
-        cd 01.IO_flush/Code_test2  # 修改为实际的路径
-        gcc test1.c -o test1_program
-        chmod +x test1_program
-        ./test1_program -normal  # 执行程序，生成输出文件
-
-    - name: Run test program with different options
-      run: |
-        cd 01.IO_flush/Code_test2  # 修改为实际的路径
-        chmod +x test1_program
-        ./test1_program -normal
-        ./test1_program -fflush
-        ./test1_program -n
-        ./test1_program -redirect_normal
-        ./test1_program -redirect_fflush
-        ./test1_program -redirect_n
-
-    - name: List output directory contents
-      run: |
-        ls -R output/
-        cat output/output_normal.txt  # 输出查看结果
-
-    - name: Upload output files as artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: output-files
-        path: output/
+      steps:
+        - name: Install gcc
+          run: |
+            sudo apt-get update
+            sudo apt install build-essential
+            
+        - name: Checkout source code
+          uses: actions/checkout@v4
+          
+        - name: Compile the program
+          run: |
+            cd 01.IO_flush/Code_test2
+            gcc test1.c -o io_flush_auto
+            
+        - name: Save build result for testing
+          uses: actions/upload-artifact@v4
+          with:
+            name: io_flush_auto
+            path: ${{ github.workspace }}/01.IO_flush/Code_test2/io_flush_auto
+    
+    test:
+      needs:
+        - setup_and_build
+        
+      name: Test
+      runs-on: ubuntu-latest
+      steps:
+        - name: Download build result for testing
+          uses: actions/download-artifact@v4
+          with:
+            name: io_flush_auto
+            path: Code_test2
+        
+        - name: Run tests
+          run: |
+            cd Code_test2
+            chmod 777 io_flush_auto
+            ./io_flush_auto -normal
+            ./io_flush_auto -fflush
+            ./io_flush_auto -n
+            ./io_flush_auto -redirect_normal
+            ./io_flush_auto -redirect_fflush
+            ./io_flush_auto -redirect_n
