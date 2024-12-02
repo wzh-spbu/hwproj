@@ -45,13 +45,13 @@ jobs:
             name: io_flush_auto
             path: Code_test2
         
-        - name: Run tests
+        - name: Run tests and capture all output
           run: |
             cd Code_test2
             chmod 777 io_flush_auto
-            ./io_flush_auto -normal
-            ./io_flush_auto -fflush
-            ./io_flush_auto -n
-            ./io_flush_auto -redirect_normal
-            ./io_flush_auto -redirect_fflush
-            ./io_flush_auto -redirect_n
+            ./io_flush_auto -normal 2>&1 | tee result_normal.log
+            ./io_flush_auto -fflush 2>&1 | tee result_fflush.log
+            ./io_flush_auto -n 2>&1 | tee result_n.log
+            ./io_flush_auto -redirect_normal 2>&1 | tee result_redirect_normal.log
+            ./io_flush_auto -redirect_fflush 2>&1 | tee result_redirect_fflush.log
+            ./io_flush_auto -redirect_n 2>&1 | tee result_redirect_n.log
