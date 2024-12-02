@@ -16,7 +16,6 @@ jobs:
       - name: Checkout code from repository
         uses: actions/checkout@v4
 
-
       - name: Install gcc
         run: |
           sudo apt-get update
@@ -24,14 +23,14 @@ jobs:
 
       - name: Build the test program
         run: |
-          cd Code_test2
+          cd 01.IO_flush/Code_test2
           gcc test1.c -o test1_program
 
       - name: Upload build artifact for testing
         uses: actions/upload-artifact@v4
         with:
           name: test1_program
-          path: ./Code_test2/test1_program
+          path: ./01.IO_flush/Code_test2/test1_program
 
   test:
     needs: [setup_and_build]
@@ -43,21 +42,18 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: test1_program
-          path: ./Code_test2
+          path: ./01.IO_flush/Code_test2
 
       - name: Run test program with different options
         run: |
-          cd Code_test2
+          cd 01.IO_flush/Code_test2
           chmod +x test1_program
-          
-          # 运行程序并使用不同的命令行参数
           ./test1_program -normal
           ./test1_program -fflush
           ./test1_program -n
           ./test1_program -redirect_normal
           ./test1_program -redirect_fflush
           ./test1_program -redirect_n
-          
 
       - name: Check output files
         run: |
