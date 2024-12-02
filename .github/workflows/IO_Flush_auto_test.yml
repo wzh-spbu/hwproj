@@ -1,55 +1,46 @@
-name: IO Flush Auto Test
+name: Build and Test
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches:
+      - main
 
 jobs:
-  setup_and_build:
-    name: Setup and Build Program
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install GCC
-        run: |
-          sudo apt-get update
-          sudo apt install build-essential
-          
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        
-      - name: Build Program
-        run: |
-          cd 01.IO_flush/Code_test2
-          gcc test1.c -o test1_program
-          
-      - name: Save Build Result for Testing
-        uses: actions/upload-artifact@v4
-        with:
-          name: test1_program
-          path: ${{ github.workspace }}/01.IO_flush/Code_test2/output
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-  test:
-    needs:
-      - setup_and_build
+    - name: Create output directory
+      run: mkdir -p output
 
-    name: Run Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Build Result for Testing
-        uses: actions/download-artifact@v4
-        with:
-          name: test1_program
-          path: 01.IO_flush/Code_test2/output
-        
-      - name: Run Program
-        run: |
-          cd 01.IO_flush/Code_test2/output
-          chmod 777 test1_program
-          ./test1_program 1
-          ./test1_program 2
-          ./test1_program 3
-          ./test1_program 4
+    - name: Compile and run program
+      run: |
+        cd 01.IO_flush/Code_test2  # 修改为实际的路径
+        gcc test1.c -o test1_program
+        chmod +x test1_program
+        ./test1_program -normal  # 执行程序，生成输出文件
+
+    - name: Run test program with different options
+      run: |
+        cd 01.IO_flush/Code_test2  # 修改为实际的路径
+        chmod +x test1_program
+        ./test1_program -normal
+        ./test1_program -fflush
+        ./test1_program -n
+        ./test1_program -redirect_normal
+        ./test1_program -redirect_fflush
+        ./test1_program -redirect_n
+
+    - name: List output directory contents
+      run: |
+        ls -R output/
+        cat output/output_normal.txt  # 输出查看结果
+
+    - name: Upload output files as artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: output-files
+        path: output/
