@@ -9,58 +9,47 @@ on:
 
 jobs:
   setup_and_build:
-    name: Настройка и запуск билда
+    name: Setup and Build Program
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code from repository
-        uses: actions/checkout@v4
-
-      - name: Install gcc
+      - name: Install GCC
         run: |
           sudo apt-get update
           sudo apt install build-essential
-
-      - name: Build the test program
+          
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: Build Program
         run: |
           cd 01.IO_flush/Code_test2
           gcc test1.c -o test1_program
-
-      - name: Upload build artifact for testing
+          
+      - name: Save Build Result for Testing
         uses: actions/upload-artifact@v4
         with:
           name: test1_program
-          path: ./01.IO_flush/Code_test2/test1_program
+          path: ${{ github.workspace }}/01.IO_flush/Code_test2/output
 
   test:
-    needs: [setup_and_build]
+    needs:
+      - setup_and_build
+
     name: Run Tests
     runs-on: ubuntu-latest
-
     steps:
-      - name: Download build artifact for testing
+      - name: Download Build Result for Testing
         uses: actions/download-artifact@v4
         with:
           name: test1_program
-          path: ./01.IO_flush/Code_test2
-
-      - name: Run test program with different options
+          path: 01.IO_flush/Code_test2/output
+        
+      - name: Run Program
         run: |
-          cd 01.IO_flush/Code_test2
-          chmod +x test1_program
-          ./test1_program -normal
-          ./test1_program -fflush
-          ./test1_program -n
-          ./test1_program -redirect_normal
-          ./test1_program -redirect_fflush
-          ./test1_program -redirect_n
-
-      - name: Check output files
-        run: |
-          ls output/
-          cat output/output_normal.txt
-          cat output/error_normal.txt
-          cat output/output_fflush.txt
-          cat output/error_fflush.txt
-          cat output/output_with_n.txt
-          cat output/error_with_n.txt
+          cd 01.IO_flush/Code_test2/output
+          chmod 777 test1_program
+          ./test1_program 1
+          ./test1_program 2
+          ./test1_program 3
+          ./test1_program 4
