@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch:  # 允许手动触发
 
 jobs:
   build:
@@ -19,13 +19,19 @@ jobs:
 
     - name: Install MSYS2 and MinGW
       run: |
+        # 安装 MSYS2
         choco install msys2 -y
         refreshenv
+
+        # 启动 MSYS2 环境并更新
         D:\tools\msys64\usr\bin\bash.exe -l -c "pacman -Syu --noconfirm"
+        
+        # 安装 MinGW GCC 编译器
         D:\tools\msys64\usr\bin\bash.exe -l -c "pacman -S mingw-w64-x86_64-gcc --noconfirm"
 
     - name: Compile the C code
       run: |
+        # 使用 MinGW 编译 C 代码
         D:\tools\msys64\mingw64\bin\gcc.exe 02.Memory_Overcommit/src/overcommit.c -o overcommit.exe
 
     - name: Run the compiled program
