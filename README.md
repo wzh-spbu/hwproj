@@ -1,3 +1,8 @@
+[![IO Flush Auto Test](https://github.com/wzh-spbu/hwproj/actions/workflows/IO_Flush_auto_test.yml/badge.svg)](https://github.com/wzh-spbu/hwproj/actions/workflows/IO_Flush_auto_test.yml)
+[![Memory Overcommit Linux Test](https://github.com/wzh-spbu/hwproj/actions/workflows/Memory_Overcommit_linux.yml/badge.svg)](https://github.com/wzh-spbu/hwproj/actions/workflows/Memory_Overcommit_linux.yml)
+
+
+
 # Описание репозитория
 ## Автор
 - ФИО - Ван Цзыхань
