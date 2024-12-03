@@ -1,4 +1,4 @@
-name: Memory Overcommit Windows Test
+name: Build and Run C Code on Windows
 
 on:
   push:
@@ -17,16 +17,16 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up MSYS2 and Install MinGW
+    - name: Install MSYS2 and MinGW
       run: |
-        choco install msys2
+        choco install msys2 -y
         refreshenv
-        pacman -Syu --noconfirm
-        pacman -S mingw-w64-x86_64-gcc --noconfirm
+        D:\tools\msys64\usr\bin\bash.exe -l -c "pacman -Syu --noconfirm"
+        D:\tools\msys64\usr\bin\bash.exe -l -c "pacman -S mingw-w64-x86_64-gcc --noconfirm"
 
     - name: Compile the C code
       run: |
-        gcc 02.Memory_Overcommit/src/overcommit.c -o overcommit.exe
+        D:\tools\msys64\mingw64\bin\gcc.exe 02.Memory_Overcommit/src/overcommit.c -o overcommit.exe
 
     - name: Run the compiled program
       run: |
