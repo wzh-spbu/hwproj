@@ -7,34 +7,30 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:  # Allows manual triggering
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    # Step 1: Checkout the repository
     - name: Checkout repository
-      uses: actions/checkout@v3  # Use the latest version
+      uses: actions/checkout@v3
 
-    # Step 2: Set up MSYS2 and install MinGW GCC
     - name: Set up MSYS2 and MinGW
       uses: msys2/setup-msys2@v2
       with:
-        # Optionally specify the MSYS2 version
-        # msys2-version: 2022-10-01
         update: true
         install: |
           mingw-w64-x86_64-gcc
 
-    # Step 3: Compile the C code
+
     - name: Compile C code
       shell: msys2 {0}
       run: |
         gcc 02.Memory_Overcommit/src/overcommit.c -o overcommit.exe
 
-    # Optional Step 4: Verify the executable exists
+
     - name: Verify Executable
       run: |
         if (Test-Path "./overcommit.exe") {
