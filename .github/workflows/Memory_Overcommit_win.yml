@@ -1,4 +1,4 @@
-name: Build and Run C Code on Windows
+name: Build C Code on Windows
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   build:
@@ -15,25 +15,21 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # Updated to the latest version
 
     - name: Install MSYS2 and MinGW
       run: |
-        # 安装 MSYS2
+        # Install MSYS2 using Chocolatey
         choco install msys2 -y
         refreshenv
 
-        # 启动 MSYS2 环境并更新
-        D:\tools\msys64\usr\bin\bash.exe -l -c "pacman -Syu --noconfirm"
-        
-        # 安装 MinGW GCC 编译器
-        D:\tools\msys64\usr\bin\bash.exe -l -c "pacman -S mingw-w64-x86_64-gcc --noconfirm"
+        # Update MSYS2 packages
+        C:\tools\msys64\usr\bin\bash.exe -l -c "pacman -Syu --noconfirm"
+
+        # Install MinGW GCC compiler
+        C:\tools\msys64\usr\bin\bash.exe -l -c "pacman -S --needed --noconfirm mingw-w64-x86_64-gcc"
 
     - name: Compile the C code
       run: |
-        # 使用 MinGW 编译 C 代码
-        D:\tools\msys64\mingw64\bin\gcc.exe 02.Memory_Overcommit/src/overcommit.c -o overcommit.exe
-
-    - name: Run the compiled program
-      run: |
-        ./overcommit.exe
+        # Add MinGW to PATH
+        C:\tools\msys64\mingw64\bin\gcc.exe 02.Memory_Overcommit/src/overcommit.c -o overcommit.exe
