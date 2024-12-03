@@ -14,22 +14,32 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    # Step 1: Checkout the repository
     - name: Checkout repository
-      uses: actions/checkout@v3  # Updated to the latest version
+      uses: actions/checkout@v3  # Use the latest version
 
-    - name: Install MSYS2 and MinGW
+    # Step 2: Set up MSYS2 and install MinGW GCC
+    - name: Set up MSYS2 and MinGW
+      uses: msys2/setup-msys2@v2
+      with:
+        # Optionally specify the MSYS2 version
+        # msys2-version: 2022-10-01
+        update: true
+        install: |
+          mingw-w64-x86_64-gcc
+
+    # Step 3: Compile the C code
+    - name: Compile C code
+      shell: msys2 {0}
       run: |
-        # Install MSYS2 using Chocolatey
-        choco install msys2 -y
-        refreshenv
+        gcc 02.Memory_Overcommit/src/overcommit.c -o overcommit.exe
 
-        # Update MSYS2 packages
-        C:\tools\msys64\usr\bin\bash.exe -l -c "pacman -Syu --noconfirm"
-
-        # Install MinGW GCC compiler
-        C:\tools\msys64\usr\bin\bash.exe -l -c "pacman -S --needed --noconfirm mingw-w64-x86_64-gcc"
-
-    - name: Compile the C code
+    # Optional Step 4: Verify the executable exists
+    - name: Verify Executable
       run: |
-        # Add MinGW to PATH
-        C:\tools\msys64\mingw64\bin\gcc.exe 02.Memory_Overcommit/src/overcommit.c -o overcommit.exe
+        if (Test-Path "./overcommit.exe") {
+          Write-Output "Compilation successful. Executable created."
+        } else {
+          Write-Error "Compilation failed. Executable not found."
+          exit 1
+        }
