@@ -1,0 +1,36 @@
+name: Memory Overcommit Windows Test
+
+on:
+    push:
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
+    workflow_dispatch:
+
+jobs:
+    setup_and_build:
+      name: Setup and Build on Windows
+      runs-on: windows-latest
+
+      steps:
+        - name: Checkout Source Code
+          uses: actions/checkout@v4
+            
+        - name: Install Build Tools
+          run: |
+            choco install visualstudio2019community
+            choco install mingw
+            echo "Installing build tools complete."
+        
+        - name: Compile Program with MSVC (or MinGW)
+          run: |
+            cd 02.Memory_Overcommit/src
+            cl /EHsc overcommit.c /Fe:overcommit.exe
+            # Or, if using MinGW, you can use gcc:
+            # gcc overcommit.c -o overcommit.exe
+            
+        - name: Save Build Artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: Windows_Build_Codes
+            path: ${{ github.workspace }}/02.Memory_Overcommit/src/overcommit.exe
