@@ -16,19 +16,24 @@ jobs:
         - name: Checkout Source Code
           uses: actions/checkout@v4
             
-        - name: Install Build Tools
+        - name: Install Visual Studio Build Tools
           run: |
-            choco install visualstudio2019community
-            choco install mingw
-            echo "Installing build tools complete."
-        
-        - name: Compile Program with MSVC (or MinGW)
+            # Install Visual Studio Build Tools
+            choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --quiet --norestart"
+            # Install Python (if needed for your setup)
+            choco install python --version 3.8
+            
+        - name: Set up MSVC environment
+          run: |
+            # Set up the Visual Studio command line environment for MSVC
+            # This is needed for `cl` to work
+            call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
+            
+        - name: Compile Program with MSVC
           run: |
             cd 02.Memory_Overcommit/src
             cl /EHsc overcommit.c /Fe:overcommit.exe
-            # Or, if using MinGW, you can use gcc:
-            # gcc overcommit.c -o overcommit.exe
-            
+
         - name: Save Build Artifact
           uses: actions/upload-artifact@v4
           with:
