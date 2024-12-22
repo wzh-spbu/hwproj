@@ -1,5 +1,5 @@
 # .github/workflows/build-test-main.yml
-name: Build and Test test_main.c on Windows
+name: fractal test_main.c on Linux
 
 on:
   push:
@@ -12,35 +12,30 @@ on:
 
 jobs:
   build-test-main:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest  # 使用 Ubuntu (Linux)
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up MSYS2 and MinGW
-      uses: msys2/setup-msys2@v2
-      with:
-        update: true
-        install: |
-          mingw-w64-x86_64-gcc
-          mingw-w64-x86_64-check
+    - name: Set up GCC and Check library
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc check
 
     - name: Compile test_main.c (Unit tests)
-      shell: msys2 {0}
       run: |
-        gcc 03.A.Fractal/src/test_main.c -o test_main.exe -lcheck
+        gcc 03.A.Fractal/src/test_main.c 03.A.Fractal/src/image.c 03.A.Fractal/src/fractal.c -o test_main.exe -lcheck
 
     - name: Verify test_main executable
       run: |
-        if (Test-Path "./test_main.exe") {
-          Write-Output "test_main.exe compilation successful."
-        } else {
-          Write-Error "test_main.exe compilation failed."
+        if [ -f "./test_main.exe" ]; then
+          echo "test_main.exe compilation successful."
+        else
+          echo "test_main.exe compilation failed."
           exit 1
-        }
+        fi
 
     - name: Run Unit Tests
       run: |
         ./test_main.exe
-      shell: msys2 {0}

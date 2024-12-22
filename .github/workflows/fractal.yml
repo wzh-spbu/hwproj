@@ -1,5 +1,5 @@
 # .github/workflows/build-main.yml
-name: Build and Test main.c on Windows
+name: fractal main.c test
 
 on:
   push:
@@ -12,34 +12,30 @@ on:
 
 jobs:
   build-main:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest  # 使用 Ubuntu (Linux)
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up MSYS2 and MinGW
-      uses: msys2/setup-msys2@v2
-      with:
-        update: true
-        install: |
-          mingw-w64-x86_64-gcc
+    - name: Set up GCC
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc
 
     - name: Compile main.c
-      shell: msys2 {0}
       run: |
-        gcc 03.A.Fractal/src/main.c -o main.exe
+        gcc 03.A.Fractal/src/main.c 03.A.Fractal/src/image.c 03.A.Fractal/src/fractal.c -o main.exe
 
     - name: Verify main executable
       run: |
-        if (Test-Path "./main.exe") {
-          Write-Output "main.exe compilation successful."
-        } else {
-          Write-Error "main.exe compilation failed."
+        if [ -f "./main.exe" ]; then
+          echo "main.exe compilation successful."
+        else
+          echo "main.exe compilation failed."
           exit 1
-        }
+        fi
 
     - name: Run main program (optional)
       run: |
         ./main.exe
-      shell: msys2 {0}
