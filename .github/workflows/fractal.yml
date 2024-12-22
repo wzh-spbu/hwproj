@@ -1,5 +1,5 @@
 # .github/workflows/build-main.yml
-name: fractal main.c test
+name: fractal main.c test on Linux
 
 on:
   push:
@@ -36,6 +36,6 @@ jobs:
           exit 1
         fi
 
-    - name: Run main program (optional)
+    - name: Run main program (pass arguments)
       run: |
-        ./main.exe
+        ./main.exe sierpinski.pgm sierpinski 4
