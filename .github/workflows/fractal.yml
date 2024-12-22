@@ -1,0 +1,45 @@
+# .github/workflows/build-main.yml
+name: Build and Test main.c on Windows
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-main:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up MSYS2 and MinGW
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: |
+          mingw-w64-x86_64-gcc
+
+    - name: Compile main.c
+      shell: msys2 {0}
+      run: |
+        gcc 03.A.Fractal/src/main.c -o main.exe
+
+    - name: Verify main executable
+      run: |
+        if (Test-Path "./main.exe") {
+          Write-Output "main.exe compilation successful."
+        } else {
+          Write-Error "main.exe compilation failed."
+          exit 1
+        }
+
+    - name: Run main program (optional)
+      run: |
+        ./main.exe
+      shell: msys2 {0}

@@ -1,0 +1,46 @@
+# .github/workflows/build-test-main.yml
+name: Build and Test test_main.c on Windows
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-test-main:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up MSYS2 and MinGW
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: |
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-check
+
+    - name: Compile test_main.c (Unit tests)
+      shell: msys2 {0}
+      run: |
+        gcc 03.A.Fractal/src/test_main.c -o test_main.exe -lcheck
+
+    - name: Verify test_main executable
+      run: |
+        if (Test-Path "./test_main.exe") {
+          Write-Output "test_main.exe compilation successful."
+        } else {
+          Write-Error "test_main.exe compilation failed."
+          exit 1
+        }
+
+    - name: Run Unit Tests
+      run: |
+        ./test_main.exe
+      shell: msys2 {0}
