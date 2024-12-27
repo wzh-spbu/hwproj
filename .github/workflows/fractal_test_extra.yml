@@ -1,0 +1,40 @@
+
+name: fractal test_main_extra.c on Linux
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-test-main-extra:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up GCC and Check library
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc check
+
+    - name: Compile test_main_extra.c (Unit tests)
+      run: |
+        gcc 03.A.Fractal/src/test_main_extra.c 03.A.Fractal/src/image.c 03.A.Fractal/src/fractal.c -o test_main_extra.exe -lcheck
+
+    - name: Verify test_main_extra executable
+      run: |
+        if [ -f "./test_main_extra.exe" ]; then
+          echo "test_main_extra.exe compilation successful."
+        else
+          echo "test_main_extra.exe compilation failed."
+          exit 1
+        fi
+
+    - name: Run Unit Tests
+      run: |
+        ./test_main_extra.exe
