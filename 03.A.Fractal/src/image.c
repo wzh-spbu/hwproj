@@ -5,8 +5,6 @@
 
 #include "image.h"
 
-// 不需要重复定义 struct image，直接使用 image.h 中定义的内容即可。
-
 image_p create_image(pixel_coord width, pixel_coord height)
 {
     image_t *v = malloc(sizeof(image_t));

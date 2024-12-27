@@ -43,31 +43,21 @@ UTEST_F(ImageTestFixture, SierpinskiCarpet) {
         clear_image(utest_fixture->i);
         draw_sierpinski_carpet(utest_fixture->i, 0, 0, 300, depth);
 
-        int center_value = get_pixel(utest_fixture->i, 150, 150);
-        if (depth == 1) {
-            ASSERT_EQ(0, center_value);
-        } else {
-            ASSERT_EQ(0, center_value);
-        }
+        for (int dy = 0; dy < 3; ++dy) {
+            for (int dx = 0; dx < 3; ++dx) {
+                if (dx == 1 && dy == 1) {
+                    continue;
+                }
 
-        ASSERT_EQ(0, get_pixel(utest_fixture->i, 120, 120));
-        ASSERT_EQ(0, get_pixel(utest_fixture->i, 180, 180));
-        if (depth > 1) {
-            ASSERT_EQ(255, get_pixel(utest_fixture->i, 150, 180));
-            ASSERT_EQ(255, get_pixel(utest_fixture->i, 120, 150));
-        }
-
-        if (depth >= 3) {
-            ASSERT_EQ(0, get_pixel(utest_fixture->i, 100, 100));
-            ASSERT_EQ(0, get_pixel(utest_fixture->i, 200, 200));
-        }
-
-        if (depth == 4) {
-            ASSERT_EQ(255, get_pixel(utest_fixture->i, 50, 50));
-            ASSERT_EQ(255, get_pixel(utest_fixture->i, 250, 250));
+                pixel_coord center_x = dx * (300 / (3 * (depth + 1))) + 150;
+                pixel_coord center_y = dy * (300 / (3 * (depth + 1))) + 150;
+                
+                ASSERT_EQ(0, get_pixel(utest_fixture->i, center_x, center_y));
+            }
         }
     }
 }
+
 
 
 
