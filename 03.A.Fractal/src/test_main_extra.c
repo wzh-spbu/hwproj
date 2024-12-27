@@ -74,25 +74,7 @@ UTEST_F(ImageTestFixture, JuliaFractal) {
 
     ASSERT_EQ(0, get_pixel(utest_fixture->i, 10, 10));
 
-    free_image(utest_fixture->i);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 UTEST_MAIN();
